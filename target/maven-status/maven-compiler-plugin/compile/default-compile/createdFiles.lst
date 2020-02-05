@@ -1,1 +1,5 @@
+com\spring\security\init\security\TokenHelper.class
+com\spring\security\init\controllers\MainController.class
+com\spring\security\init\configurations\WebSecurityConfig.class
+.netbeans_automatic_build
 com\spring\security\init\MainSecurity.class
