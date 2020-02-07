@@ -14,4 +14,8 @@ import com.spring.security.init.models.Authority;
 public interface AuthorityService {
 
     public Authority findByName(String name);
+    
+    public Authority save(Authority authority);
+    
+    public void wipeOut();
 }

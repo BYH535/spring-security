@@ -34,4 +34,10 @@ public class Authority implements Serializable, GrantedAuthority {
     public String getAuthority() {
         return this.name;
     }
+
+    public Authority(Long idAuthority, String name) {
+        this.idAuthority = idAuthority;
+        this.name = name;
+    }
+
 }

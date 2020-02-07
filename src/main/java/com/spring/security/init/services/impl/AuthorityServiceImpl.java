@@ -25,5 +25,15 @@ public class AuthorityServiceImpl implements AuthorityService {
     public Authority findByName(String name) {
         return this.authorityDAO.findByName(name);
     }
+    
+    @Override
+    public Authority save(Authority authority) {
+        return this.authorityDAO.save(authority);
+    }
+    
+    @Override
+    public void wipeOut(){
+        this.authorityDAO.deleteAll();
+    }
 
 }
