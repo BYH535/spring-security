@@ -1,13 +1,17 @@
 package com.spring.security.init.security;
 
+import com.spring.security.init.services.UserAppService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
@@ -34,9 +38,9 @@ public class TokenHelper {
     private String AUTH_COOKIE;
 
     @Autowired
-    UserDetailsService userDetailsService;
+    UserAppService userDetailsService;
 
-    private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
+    private final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
     public String getUsernameFromToken(String token) {
         String username;
@@ -66,7 +70,7 @@ public class TokenHelper {
                     .setSigningKey(this.SECRET)
                     .parseClaimsJws(token)
                     .getBody();
-        } catch (Exception e) {
+        } catch (ExpiredJwtException | MalformedJwtException | SignatureException | UnsupportedJwtException | IllegalArgumentException e) {
             claims = null;
         }
         return claims;
@@ -84,7 +88,7 @@ public class TokenHelper {
         try {
             final Date expirationDate = getClaimsFromToken(token).getExpiration();
             String username = getUsernameFromToken(token);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = userDetailsService.findByUsername(username);
             return expirationDate.compareTo(generateCurrentDate()) > 0;
         } catch (Exception e) {
             return false;
@@ -146,9 +150,9 @@ public class TokenHelper {
         if (request.getCookies() == null) {
             return null;
         }
-        for (int i = 0; i < request.getCookies().length; i++) {
-            if (request.getCookies()[i].getName().equals(name)) {
-                return request.getCookies()[i];
+        for (Cookie cookie : request.getCookies()) {
+            if (cookie.getName().equals(name)) {
+                return cookie;
             }
         }
         return null;

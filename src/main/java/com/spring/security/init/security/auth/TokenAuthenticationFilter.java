@@ -1,8 +1,7 @@
 package com.spring.security.init.security.auth;
 
 import com.spring.security.init.security.TokenHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.spring.security.init.services.UserAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,16 +20,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
-
-    private final Log logger = LogFactory.getLog(this.getClass());
 
     @Autowired
     TokenHelper tokenHelper;
 
     @Autowired
-    UserDetailsService userDetailsService;
+    UserAppService userDetailsService;
 
     /*
      * The below paths will get ignored by the filter
@@ -44,7 +42,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     public static final String LOGIN_MATCHER = "/auth/login";
     public static final String LOGOUT_MATCHER = "/auth/logout";
 
-    private List<String> pathsToSkip = Arrays.asList(
+    private final List<String> pathsToSkip = Arrays.asList(
             ROOT_MATCHER,
             HTML_MATCHER,
             FAVICON_MATCHER,
@@ -56,7 +54,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     );
 
     @Override
-    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) 
+            throws IOException, ServletException {
 
         String authToken = tokenHelper.getToken(request);
         if (authToken != null && !skipPathRequest(request, pathsToSkip)) {
@@ -64,12 +63,12 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             try {
                 String username = tokenHelper.getUsernameFromToken(authToken);
                 // get user
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                UserDetails userDetails = userDetailsService.findByUsername(username);
                 // create authentication
                 TokenBasedAuthentication authentication = new TokenBasedAuthentication(userDetails);
                 authentication.setToken(authToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            } catch (Exception e) {
+            } catch (UsernameNotFoundException e) {
                 SecurityContextHolder.getContext().setAuthentication(new AnonAuthentication());
             }
         } else {

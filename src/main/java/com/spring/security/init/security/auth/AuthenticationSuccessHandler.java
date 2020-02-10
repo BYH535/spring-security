@@ -1,6 +1,7 @@
 package com.spring.security.init.security.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spring.security.init.models.UserApp;
 import com.spring.security.init.models.UserTokenState;
 import com.spring.security.init.security.TokenHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import org.springframework.security.core.userdetails.User;
 
 @Component
 public class AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -35,7 +35,7 @@ public class AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccess
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
         clearAuthenticationAttributes(request);
-        User user = (User) authentication.getPrincipal();
+        UserApp user = (UserApp) authentication.getPrincipal();
 
         String jws = tokenHelper.generateToken(user.getUsername());
 

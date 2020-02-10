@@ -15,12 +15,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
@@ -28,6 +30,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  * @author hbenyahia
  */
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${jwt.cookie}")
@@ -65,9 +68,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthenticationFailureHandler authenticationFailureHandler;
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    protected void configure(final HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
+                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .and()
                 .cors()
                 .and()
                 .sessionManagement()

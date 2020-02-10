@@ -26,4 +26,14 @@ public class UserAppServiceImpl implements UserAppService {
         return this.userAppDAO.findByUsername(username);
     }
 
+    @Override
+    public UserApp save(UserApp userApp) {
+        return this.userAppDAO.save(userApp);
+    }
+
+    @Override
+    public void wipeOut() {
+        this.userAppDAO.deleteAll();
+    }
+
 }

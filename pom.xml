@@ -80,13 +80,21 @@
             <artifactId>joda-time</artifactId>
         </dependency>
         
-        <dependency>
+<!--        <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-spring-boot-starter</artifactId>
+            <version>8.0.2</version>
         </dependency>
+
+        
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-spring-security-adapter</artifactId>
+            <version>8.0.2</version>
+        </dependency>-->
     </dependencies>
     
-    <dependencyManagement>
+<!--    <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.keycloak.bom</groupId>
@@ -96,5 +104,5 @@
                 <scope>import</scope>
             </dependency>
         </dependencies>
-    </dependencyManagement>
+    </dependencyManagement>-->
 </project>

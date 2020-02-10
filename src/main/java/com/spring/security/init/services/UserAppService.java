@@ -6,4 +6,8 @@ public interface UserAppService {
 
     public UserApp findByUsername(String username);
 
+    public UserApp save(UserApp userApp);
+    
+    public void wipeOut();
+
 }

@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  *
@@ -46,6 +47,12 @@ public class UserApp implements Serializable, UserDetails {
             inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "idAuthority"))
     private List<Authority> authorities;
 
+    public UserApp(String username, String password, List<Authority> authorities) {
+        this.username = username;
+        this.password = new BCryptPasswordEncoder().encode(password);
+        this.authorities = authorities;
+    }
+    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.authorities;

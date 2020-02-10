@@ -6,7 +6,11 @@
 package com.spring.security.init;
 
 import com.spring.security.init.models.Authority;
+import com.spring.security.init.models.UserApp;
 import com.spring.security.init.services.AuthorityService;
+import com.spring.security.init.services.UserAppService;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,11 +28,22 @@ public class MainSecurity {
     }
 
     @Bean
-    public CommandLineRunner demoData(AuthorityService authorityService) {
+    public CommandLineRunner demoData(AuthorityService authorityService, UserAppService userService) {
         return (String[] args) -> {
             authorityService.wipeOut();
-            authorityService.save(new Authority(new Long(2), "ROLE_USER"));
-            authorityService.save(new Authority(new Long(3), "ROLE_ADMIN"));
+            Authority userAuthority = new Authority(new Long(2), "ROLE_USER");
+            Authority adminAuthority = new Authority(new Long(3), "ROLE_ADMIN");
+
+            userService.wipeOut();
+
+            List<Authority> userAuthorities = new ArrayList<>();
+            List<Authority> adminAuthorities = new ArrayList<>();
+
+            userAuthorities.add(userAuthority);
+            adminAuthorities.add(adminAuthority);
+
+            userService.save(new UserApp("user", "user", userAuthorities));
+            userService.save(new UserApp("admin", "admin", adminAuthorities));
         };
     }
 }
